@@ -7,6 +7,10 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
+// Project
+#include "vec3.h"
+#include "color.h"
+
 
 using channel = char;
 
@@ -26,13 +30,15 @@ int main()
 
 		for (int x = 0; x < width; ++x)
 		{
-			double r = static_cast<double>(x) / (width - 1);
-			double g = static_cast<double>(y) / (height - 1);
-			double b = 0.0;
+			Color pixel_color{
+				static_cast<float>(x) / (width - 1),
+				static_cast<float>(y) / (height - 1),
+				0.0
+			};
 
-			png_data[pixel_index + 0] = static_cast<channel>(255.0 * r);
-			png_data[pixel_index + 1] = static_cast<channel>(255.0 * g);
-			png_data[pixel_index + 2] = static_cast<channel>(255.0 * b);			
+			png_data[pixel_index + 0] = static_cast<channel>(255.0 * pixel_color.x());
+			png_data[pixel_index + 1] = static_cast<channel>(255.0 * pixel_color.y());
+			png_data[pixel_index + 2] = static_cast<channel>(255.0 * pixel_color.z());
 
 			pixel_index += channel_count;
 		}
