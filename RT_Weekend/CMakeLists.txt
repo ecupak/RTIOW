@@ -19,7 +19,7 @@ FetchContent_MakeAvailable(stb)
 
 
 # Add source to this project's executable.
-add_executable(RT_Weekend "RT_Weekend.cpp" "RT_Weekend.h" "vec3.h" "color.h")
+add_executable(RT_Weekend "RT_Weekend.cpp" "RT_Weekend.h" "vec3.h" "color.h" "ray.h")
 
 
 # Include external headers / files.
