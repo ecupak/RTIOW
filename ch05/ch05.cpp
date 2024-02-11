@@ -1,7 +1,8 @@
-﻿#include "RT_Weekend.h"
+﻿#include "ch05.h"
 
 // STL
 #include <iostream>
+#include <string>
 
 // Includes
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -13,16 +14,35 @@
 #include "ray.h"
 
 
+bool hitSphere(Point3 center, float radius, const Ray& ray)
+{
+	Vec3 center_to_origin = (ray.origin() - center);
+
+	float a = dot(ray.direction(), ray.direction());
+	float b = 2.0f * dot(ray.direction(), center_to_origin);
+	float c = dot(center_to_origin, center_to_origin) - pow(radius, 2.0f);
+
+	float discriminant = pow(b, 2.0f) - 4.0f * a * c;
+	return (discriminant >= 0);
+}
+
 
 Color rayColor(const Ray& ray)
 {
+	// Compare to circle placed at (0, 0, -1).
+	if (hitSphere(Point3{ 0.0f, 0.0f, -1.0f }, 0.5f, ray))
+	{
+		return { 1.0f, 0.0f, 0.0f };
+	}
+
+	// Otherwise, get background color.
 	Vec3 unitDirection{ unitVector(ray.direction()) };
 	float t{ (unitDirection.y() + 1.0f) / 2 };
 	
 	static Color white{ 1.0f, 1.0f, 1.0f };
 	static Color skyblue{ 0.5f, 0.7f, 1.0f };
 
-	return (white * (1.0f - t)) + (skyblue * t);
+	return { (white * (1.0f - t)) + (skyblue * t) };
 }
 
 
@@ -82,6 +102,7 @@ int main()
 			// Get color ray intersects.
 			Color pixel_color{ rayColor(ray) };
 
+			// Store color data of pixel.
 			png_data[pixel_index + 0] = static_cast<channel>(255 * pixel_color.x());
 			png_data[pixel_index + 1] = static_cast<channel>(255 * pixel_color.y());
 			png_data[pixel_index + 2] = static_cast<channel>(255 * pixel_color.z());
@@ -92,7 +113,7 @@ int main()
 
 	std::clog << "\rDone                      \n";
 
-	stbi_write_png("RTIOW.png", image_width, image_height, channel_count, png_data, stride_in_bytes);
+	stbi_write_png(IMAGE_FILEPATH_AND_NAME, image_width, image_height, channel_count, png_data, stride_in_bytes);
 
 	return 0;
 }

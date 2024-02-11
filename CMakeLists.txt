@@ -9,10 +9,44 @@ if (POLICY CMP0141)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
-project ("RT_Weekend" VERSION 1.0.0 LANGUAGES C CXX)
+
+# Create project.
+project ("RT_Weekend" LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
+# Setup the include and common directories.
+set(INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
+set(COMMON_DIR "${PROJECT_SOURCE_DIR}/common")
+
+
+# Get stb library.
+include(FetchContent)
+
+set(FETCHCONTENT_BASE_DIR "${PROJECT_SOURCE_DIR}/stb")
+
+FetchContent_Declare(
+	stb
+	GIT_REPOSITORY https://github.com/nothings/stb.git
+)
+
+FetchContent_MakeAvailable(stb)
+
+# ... Move only required files to include directory (avoid polluting global include list).
+file(COPY "${FETCHCONTENT_BASE_DIR}/stb-src/stb_image_write.h" DESTINATION ${INCLUDE_DIR})
+
+# ... Remove remaining unused files.
+file(REMOVE_RECURSE "${PROJECT_SOURCE_DIR}/stb")
+
+
 # Include sub-projects.
-add_subdirectory ("RT_Weekend")
+add_subdirectory ("ch02")
+add_subdirectory ("ch03")
+add_subdirectory ("ch04")
+add_subdirectory ("ch05")
+
+
+# Make most recent the default project.
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ch05)
