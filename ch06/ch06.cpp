@@ -6,14 +6,18 @@
 #include "stb_image_write.h"
 
 // Project
-#include "all.h"
+#include "vec3.h"
+#include "ray.h"
+#include "hittable.h"
+#include "sphere.h"
+#include "hittable_list.h"
 
 
 Color rayColor(const Ray& ray, const Hittable& world)
 {
 	HitRecord hit_record;
 
-	if (world.hit(ray, 0.0f, inifinity, hit_record))
+	if (world.hit(ray, Interval{ 0.0f, inifinity }, hit_record))
 	{
 		return { (hit_record.normal + Color(1.0f, 1.0f, 1.0f)) / 2.0f };
 	}

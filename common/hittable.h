@@ -3,6 +3,7 @@
 // Project
 #include "ray.h"
 #include "vec3.h"
+#include "interval.h"
 
 
 class HitRecord 
@@ -29,5 +30,5 @@ public:
 	virtual ~Hittable() = default;
 
 
-	virtual const bool hit(const Ray& ray, float ray_Tmin, float ray_Tmax, HitRecord& hit_record) const = 0;
+	virtual const bool hit(const Ray& ray, Interval ray_t, HitRecord& hit_record) const = 0;
 };

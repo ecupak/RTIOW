@@ -88,7 +88,9 @@ public:
 };
 
 
-using Point3 = Vec3; // Distinguishing alias.
+// Distinguishing aliases.
+using Point3 = Vec3; 
+using Color = Vec3;	
 
 
 // Vector utility functions.

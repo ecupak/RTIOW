@@ -5,6 +5,7 @@
 #include <vector>
 
 // Project
+#include "interval.h"
 #include "hittable.h"
 #include "ray.h"
 
@@ -19,7 +20,7 @@ public:
 	// Methods.
 	void clear();
 	void add(std::shared_ptr<Hittable> object);
-	const bool hit(const Ray& ray, float ray_Tmin, float ray_Tmax, HitRecord& hit_record) const override;
+	const bool hit(const Ray& ray, Interval ray_t, HitRecord& hit_record) const override;
 
 private:
 	std::vector<std::shared_ptr<Hittable>> objects_;

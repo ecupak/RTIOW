@@ -1,6 +1,7 @@
 #pragma once
 
 // Project
+#include "interval.h"
 #include "hittable.h"
 #include "ray.h"
 #include "vec3.h"
@@ -14,7 +15,7 @@ public:
 		, radius_{ radius }
 	{	}
 
-	const bool hit(const Ray& ray, float ray_Tmin, float ray_Tmax, HitRecord& hit_record) const override
+	const bool hit(const Ray& ray, Interval ray_t, HitRecord& hit_record) const override
 	{
 		Vec3 center_to_origin = (ray.origin() - center_);
 
@@ -34,11 +35,11 @@ public:
 		float sqrt_discriminant{ sqrt(discriminant) };
 		float root{ (-half_b - sqrt_discriminant) / a};
 
-		if (root <= ray_Tmin || root >= ray_Tmax)
+		if (!ray_t.surrounds(root))
 		{
 			root = (-half_b + sqrt_discriminant) / a;
 
-			if (root <= ray_Tmin || root >= ray_Tmax)
+			if (!ray_t.surrounds(root))
 			{
 				return false;
 			}
