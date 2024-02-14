@@ -19,10 +19,14 @@ inline float radians(float degrees)
 	return degrees * pi / 180.0f;
 }
 
-
 inline float randomf()
 {
 	static std::uniform_real_distribution<float> distribution{ 0.0f, 1.0f };
 	static std::mt19937 generator{};
 	return distribution(generator);
+}
+
+inline float randomf(float min, float max)
+{
+	return min + (max - min) * randomf();
 }

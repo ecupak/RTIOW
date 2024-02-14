@@ -9,6 +9,7 @@
 
 // Project
 #include "interval.h"
+#include "color.h"
 
 
 void Camera::render(const Hittable& world, const char* image_output_filepath)
@@ -34,8 +35,6 @@ void Camera::render(const Hittable& world, const char* image_output_filepath)
 	{
 		std::clog << "\rScanlines remaining: " << (image_height_ - y) << ' ' << std::flush;
 
-		Point3 pixel_row{ pixel_00_loc_ + (y * pixel_delta_v_) };
-
 		for (int x = 0; x < image_width_; ++x)
 		{
 			Color pixel_color{ 0.0f, 0.0f, 0.0f };
@@ -43,12 +42,18 @@ void Camera::render(const Hittable& world, const char* image_output_filepath)
 			for (int sample = 0; sample < samples_per_pixel_; ++sample)
 			{
 				Ray ray{ get_ray(x, y) };
-				pixel_color += ray_color(ray, world);
+				pixel_color += ray_color(ray, max_depth_, world);
 			}
 
 			// Adjust pixel color by sample size.
 			float scale{ 1.0f / samples_per_pixel_ };
 			pixel_color *= scale;
+
+			// Move into gamma space.
+			for (int i = 0; i < 3; ++i)
+			{
+				pixel_color[i] = linear_to_gamma(pixel_color[i]);
+			}
 
 			// Store color data of pixel.
 			static const Interval intensity{ 0.0f, 0.999f };
@@ -70,7 +75,6 @@ void Camera::render(const Hittable& world, const char* image_output_filepath)
 	delete[] png_data;
 
 }
-
 
 Ray Camera::get_ray(int x, int y)
 {
@@ -118,17 +122,25 @@ void Camera::initialize()
 }
 
 
-Color Camera::ray_color(const Ray& ray, const Hittable& world) const
+Color Camera::ray_color(const Ray& ray, int depth, const Hittable& world) const
 {
 	HitRecord hit_record;
 
-	if (world.hit(ray, Interval{ 0.0f, inifinity }, hit_record))
+	// Reached max bounces. Return no light.
+	if (depth <= 0)
 	{
-		return { (hit_record.normal + Color(1.0f, 1.0f, 1.0f)) / 2.0f };
+		return { 0.0f, 0.0f, 0.0f };
+	}
+
+	// Check for hit (bounce ray).
+	if (world.hit(ray, Interval{ 0.001f, inifinity }, hit_record))
+	{
+		Vec3 direction{ hit_record.normal + random_unit_vector() };
+		return { ray_color(Ray{hit_record.point, direction}, depth - 1, world) / 2.0f };
 	}
 
 	// Missed, get background color.
-	Vec3 unitDirection{ unitVector(ray.direction()) };
+	Vec3 unitDirection{ unit_vector(ray.direction()) };
 	float t{ (unitDirection.y() + 1.0f) / 2 };
 
 	static Color white{ 1.0f, 1.0f, 1.0f };

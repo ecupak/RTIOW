@@ -15,7 +15,7 @@
 
 Color rayColor(const Ray& ray)
 {
-	Vec3 unitDirection{ unitVector(ray.direction()) };
+	Vec3 unitDirection{ unit_vector(ray.direction()) };
 	float t{ (unitDirection.y() + 1.0f) / 2 };
 	
 	static Color white{ 1.0f, 1.0f, 1.0f };
