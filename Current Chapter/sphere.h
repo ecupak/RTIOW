@@ -10,9 +10,10 @@
 class Sphere : public Hittable
 {
 public:
-	Sphere(Point3 center, float radius)
+	Sphere(Point3 center, float radius, std::shared_ptr<Material> material)
 		: center_{ center }
 		, radius_{ radius }
+		, material_{ material }
 	{	}
 
 	const bool hit(const Ray& ray, Interval ray_t, HitRecord& hit_record) const override
@@ -46,10 +47,11 @@ public:
 		}
 
 		// If root is in range, store data in hit record.
-		hit_record.t = root;
-		hit_record.point = ray.at(root);
-		Vec3 outward_normal{ (hit_record.point - center_) / radius_ };
+		hit_record.t_ = root;
+		hit_record.point_ = ray.at(root);
+		Vec3 outward_normal{ (hit_record.point_ - center_) / radius_ };
 		hit_record.setFaceNormal(ray, outward_normal);
+		hit_record.material_ = material_;
 
 		return true;
 	}
@@ -57,4 +59,5 @@ public:
 private:
 	Point3 center_{};
 	float radius_{ 1.0f };
+	std::shared_ptr<Material> material_;
 };

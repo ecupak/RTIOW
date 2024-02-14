@@ -44,6 +44,12 @@ public:
 		return { randomf(min, max), randomf(min, max), randomf(min, max) };
 	}
 	
+	const bool near_zero() const
+	{
+		static float threshhold{ 1e-8 };
+		return (fabs(e[0]) < threshhold) && (fabs(e[1]) < threshhold) && (fabs(e[2]) < threshhold);
+	}
+
 
 	// Primary components.
 	float x() const
@@ -194,4 +200,9 @@ inline Vec3 random_on_hemisphere(const Vec3& normal)
 	{
 		return -on_unit_sphere;
 	}
+}
+
+inline Vec3 reflect(const Vec3& v, const Vec3& n)
+{
+	return v - 2.0f * dot(v, n) * n;
 }

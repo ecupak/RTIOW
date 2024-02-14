@@ -31,23 +31,12 @@ file(COPY "${FETCHCONTENT_BASE_DIR}/stb-src/stb_image_write.h" DESTINATION "${CM
 
 
 # Set include directory.
-set(INCLUDE_DIR "${PROJECT_SOURCE_DIR}/common" "${CMAKE_BINARY_DIR}/inc")
-
-
-# Create static library.
-add_subdirectory("common")
+set(INCLUDE_DIR "${CMAKE_BINARY_DIR}/inc")
 
 
 # Include sub-projects.
-add_subdirectory ("ch02")
-add_subdirectory ("ch03")
-add_subdirectory ("ch04")
-add_subdirectory ("ch05")
-add_subdirectory ("ch06")
-add_subdirectory ("ch07")
-add_subdirectory ("ch08")
-add_subdirectory ("ch09")
+add_subdirectory ("Current Chapter")
 
 
 # Make most recent the default project.
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ch09)
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT chapter)

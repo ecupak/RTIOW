@@ -32,7 +32,7 @@ const bool HittableList::hit(const Ray& ray, Interval ray_t, HitRecord& hit_reco
 		if (object->hit(ray, Interval{ ray_t.min_, closest_hit }, temp_record))
 		{
 			was_anything_hit = true;
-			closest_hit = temp_record.t;
+			closest_hit = temp_record.t_;
 			hit_record = temp_record;
 		}
 	}

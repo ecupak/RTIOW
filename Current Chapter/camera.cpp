@@ -10,6 +10,7 @@
 // Project
 #include "interval.h"
 #include "color.h"
+#include "material.h"
 
 
 void Camera::render(const Hittable& world, const char* image_output_filepath)
@@ -135,8 +136,14 @@ Color Camera::ray_color(const Ray& ray, int depth, const Hittable& world) const
 	// Check for hit (bounce ray).
 	if (world.hit(ray, Interval{ 0.001f, inifinity }, hit_record))
 	{
-		Vec3 direction{ hit_record.normal + random_unit_vector() };
-		return { ray_color(Ray{hit_record.point, direction}, depth - 1, world) / 2.0f };
+		Ray scattered_ray{};
+		Color attenuation{};
+
+		if (hit_record.material_->scatter(ray, hit_record, attenuation, scattered_ray))
+		{
+			return attenuation * ray_color(scattered_ray, depth - 1, world);
+		}
+		return { 0.0f, 0.0f, 0.0f };
 	}
 
 	// Missed, get background color.
