@@ -4,7 +4,8 @@
 #include "vec3.h"
 
 
-class Ray {
+class Ray 
+{
 public:
 	// Ctors.
 	Ray() = default;
@@ -16,7 +17,7 @@ public:
 
 
 	// Methods.
-	Point3 at(float t)
+	Point3 at(float t) const
 	{
 		return Point3{ origin_ + (direction_ * t) };
 	}

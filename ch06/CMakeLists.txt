@@ -1,11 +1,15 @@
 ﻿# CMakeList.txt : CMake project for RT_Weekend, include source and define
 # project specific logic here.
 #
-add_executable(ch04 "ch04.cpp" "ch04.h")
+add_executable(ch06 "ch06.cpp" )
 
 
 # Set path to include files.
-target_include_directories(ch04 PRIVATE ${INCLUDE_DIR})
+target_include_directories(ch06 PRIVATE ${INCLUDE_DIR})
+
+
+# Add static library.
+target_link_libraries(ch06 HittableList)
 
 
 # Used to output files into the correct directory.

@@ -1,7 +1,6 @@
-﻿# CMakeList.txt : Top-level CMake project file, do global configuration
-# and include sub-projects here.
-#
+﻿# Top-level CMake project file
 cmake_minimum_required (VERSION 3.8)
+
 
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
@@ -10,35 +9,33 @@ if (POLICY CMP0141)
 endif()
 
 
-# Create project.
+# Project settings.
+# ... Create project and set language.
 project ("RT_Weekend" LANGUAGES C CXX)
-
+# ... Set language standard.
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-# Setup the include and common directories.
-set(INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
-set(COMMON_DIR "${PROJECT_SOURCE_DIR}/common")
-
-
-# Get stb library.
+# Fetch content.
 include(FetchContent)
 
-set(FETCHCONTENT_BASE_DIR "${PROJECT_SOURCE_DIR}/stb")
+# ... Get STB
+FetchContent_Declare(stb GIT_REPOSITORY https://github.com/nothings/stb.git)
 
-FetchContent_Declare(
-	stb
-	GIT_REPOSITORY https://github.com/nothings/stb.git
-)
-
+# ... Complete all fetches.
 FetchContent_MakeAvailable(stb)
 
-# ... Move only required files to include directory (avoid polluting global include list).
-file(COPY "${FETCHCONTENT_BASE_DIR}/stb-src/stb_image_write.h" DESTINATION ${INCLUDE_DIR})
+# Finalize STB ... Only need 1 stb file, copied to include folder (avoids polluting include space).
+file(COPY "${FETCHCONTENT_BASE_DIR}/stb-src/stb_image_write.h" DESTINATION "${CMAKE_BINARY_DIR}/inc")
 
-# ... Remove remaining unused files.
-file(REMOVE_RECURSE "${PROJECT_SOURCE_DIR}/stb")
+
+# Set include directory.
+set(INCLUDE_DIR "${PROJECT_SOURCE_DIR}/common" "${CMAKE_BINARY_DIR}/inc")
+
+
+# Create static library.
+add_subdirectory("common")
 
 
 # Include sub-projects.
@@ -46,7 +43,8 @@ add_subdirectory ("ch02")
 add_subdirectory ("ch03")
 add_subdirectory ("ch04")
 add_subdirectory ("ch05")
+add_subdirectory ("ch06")
 
 
 # Make most recent the default project.
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ch05)
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ch06)
