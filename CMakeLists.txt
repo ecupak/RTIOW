@@ -45,7 +45,8 @@ add_subdirectory ("ch04")
 add_subdirectory ("ch05")
 add_subdirectory ("ch06")
 add_subdirectory ("ch07")
+add_subdirectory ("ch08")
 
 
 # Make most recent the default project.
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ch07)
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ch08)

@@ -38,18 +38,23 @@ void Camera::render(const Hittable& world, const char* image_output_filepath)
 
 		for (int x = 0; x < image_width_; ++x)
 		{
-			// Create ray from camera to pixel center.
-			Point3 pixel_center{ pixel_row + (x * pixel_delta_u_) };
-			Vec3 camera_to_pixel{ pixel_center - camera_center_ };
-			Ray ray{ camera_center_, camera_to_pixel };
+			Color pixel_color{ 0.0f, 0.0f, 0.0f };
+			
+			for (int sample = 0; sample < samples_per_pixel_; ++sample)
+			{
+				Ray ray{ get_ray(x, y) };
+				pixel_color += ray_color(ray, world);
+			}
 
-			// Get color of whatever the ray intersects.
-			Color pixel_color{ rayColor(ray, world) };
+			// Adjust pixel color by sample size.
+			float scale{ 1.0f / samples_per_pixel_ };
+			pixel_color *= scale;
 
 			// Store color data of pixel.
-			png_data[pixel_index + 0] = static_cast<channel>(255 * pixel_color.x());
-			png_data[pixel_index + 1] = static_cast<channel>(255 * pixel_color.y());
-			png_data[pixel_index + 2] = static_cast<channel>(255 * pixel_color.z());
+			static const Interval intensity{ 0.0f, 0.999f };
+			png_data[pixel_index + 0] = static_cast<channel>(256 * intensity.clamp(pixel_color.x()));
+			png_data[pixel_index + 1] = static_cast<channel>(256 * intensity.clamp(pixel_color.y()));
+			png_data[pixel_index + 2] = static_cast<channel>(256 * intensity.clamp(pixel_color.z()));
 
 			pixel_index += channel_count;
 		}
@@ -64,6 +69,27 @@ void Camera::render(const Hittable& world, const char* image_output_filepath)
 
 	delete[] png_data;
 
+}
+
+
+Ray Camera::get_ray(int x, int y)
+{
+	// Create ray from camera to pixel center.
+	Point3 pixel_center{ pixel_00_loc_ + (x * pixel_delta_u_) + (y * pixel_delta_v_) };
+	Point3 pixel_sample{ pixel_center + pixel_sample_square() };
+	
+	Vec3 camera_to_pixel{ pixel_sample - camera_center_ };
+	return { camera_center_, camera_to_pixel };
+}
+
+
+Vec3 Camera::pixel_sample_square()
+{
+	// Return random point within square surrounding pixel (pixel center lies on the half integer).
+	float px{ randomf() - 0.5f };
+	float py{ randomf() - 0.5f };
+
+	return { (px * pixel_delta_u_) + (py * pixel_delta_v_) };
 }
 
 
@@ -92,7 +118,7 @@ void Camera::initialize()
 }
 
 
-Color Camera::rayColor(const Ray& ray, const Hittable& world) const
+Color Camera::ray_color(const Ray& ray, const Hittable& world) const
 {
 	HitRecord hit_record;
 

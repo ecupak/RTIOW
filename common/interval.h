@@ -27,6 +27,21 @@ public:
 		return x > min_ && x < max_;
 	}
 
+	float clamp(float x) const
+	{
+		if (x < min_)
+		{
+			return min_;
+		}
+
+		if (x > max_)
+		{
+			return max_;
+		}
+
+		return x;
+	}
+
 
 	// Properties.
 	float min_{ inifinity };

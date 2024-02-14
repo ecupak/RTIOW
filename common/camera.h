@@ -20,11 +20,14 @@ public:
 	// Properties.
 	float aspect_ratio_{ 1.0f };
 	int image_width_{ 100 };
+	int samples_per_pixel_{ 10 };
 
 private:
 	// Methods.
 	void initialize();
-	Color rayColor(const Ray& ray, const Hittable& world) const;
+	Ray get_ray(int x, int y);
+	Vec3 pixel_sample_square();
+	Color ray_color(const Ray& ray, const Hittable& world) const;
 
 	// Properties.
 	int image_height_{ 0 };
