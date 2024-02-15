@@ -16,9 +16,18 @@ int main()
 	std::shared_ptr<Lambertian> diff_red{ std::make_shared<Lambertian>(Color{1.0f, 0.0f, 0.0f}) };
 	std::shared_ptr<Lambertian> diff_green{ std::make_shared<Lambertian>(Color{0.0f, 1.0f, 0.0f}) };
 
+	std::shared_ptr<Metal> metal_gold{ std::make_shared<Metal>(Color{0.8f, 0.6f, 0.1f}, 0.0f) };
+	std::shared_ptr<Metal> gloss_magenta{ std::make_shared<Metal>(Color{0.6f, 0.0f, 0.6f}, 0.5f) };
+
+	std::shared_ptr<Dielectric> glass{ std::make_shared<Dielectric>(1.5f) };
+
+
 	world.add(std::make_shared<Sphere>(Point3{  0.0f, -100.5f, -1.0f }, 100.0f, diff_green));
-	world.add(std::make_shared<Sphere>(Point3{ -0.5f, 0.0f, -1.0f }, 0.5f, diff_blue));
-	world.add(std::make_shared<Sphere>(Point3{  0.5f, 0.0f, -1.0f }, 0.5f, diff_red));
+	
+	world.add(std::make_shared<Sphere>(Point3{ -1.0f, 0.0f, -1.0f }, -0.4f, glass));
+	world.add(std::make_shared<Sphere>(Point3{  0.0f, 0.0f, -0.5f },  0.5f, diff_red));
+	world.add(std::make_shared<Sphere>(Point3{  1.0f, 0.0f, -1.5f },  0.5f, metal_gold));
+	
 	
 
 	// Camera.
@@ -28,9 +37,9 @@ int main()
 	camera.samples_per_pixel_ = 100;
 	camera.max_depth_ = 50;
 
-	camera.field_of_view_v_ = 90.0f;
-	camera.look_from_ = Point3{ 0.0f, 0.0f, 0.0f };
-	camera.look_at_ = Point3{ 0.0f, 0.0f, -1.0f };
+	camera.field_of_view_v_ = 30.0f;
+	camera.look_from_ = Point3{ 3.0f, 2.0f, -1.0f };
+	camera.look_at_ = Point3{ -1.0f, 0.0f, -1.0f };
 
 	// Render.
 	camera.render(world, IMAGE_FILEPATH_AND_NAME);
