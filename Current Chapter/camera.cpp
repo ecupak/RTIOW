@@ -104,21 +104,30 @@ void Camera::initialize()
 	image_height_ = static_cast<int>(image_width_ / aspect_ratio_);
 	image_height_ = (image_height_ < 1) ? 1 : image_height_;
 
-	// Camera.
-	float focal_length{ 1.0f };
-	float viewport_height{ 2.0f };
+	camera_center_ = look_from_;
+
+	// Viewport dimensions.
+	float focal_length{ (look_from_ - look_at_).length() };
+	float theta{ radians(field_of_view_v_) };
+	float h{ tan(theta / distance_to_plane_) };
+	float viewport_height{ 2.0f * h * focal_length };
 	float viewport_width{ viewport_height * (static_cast<float>(image_width_) / image_height_) };	
 
+	// Camera vectors.
+	camera_back_ = unit_vector(look_from_ - look_at_);
+	camera_right_ = unit_vector(cross(world_up_, camera_back_));
+	camera_up_ = cross(camera_back_, camera_right_);
+
 	// Vectors along the viewport edges.
-	Vec3 viewport_u{ viewport_width, 0.0f, 0.0f };
-	Vec3 viewport_v{ 0.0f, -viewport_height, 0.0f };
+	Vec3 viewport_u{ viewport_width * camera_right_ };
+	Vec3 viewport_v{ viewport_height * -camera_up_ };
 
 	// Delta vectors for pixel stride.
 	pixel_delta_u_ = viewport_u / image_width_;
 	pixel_delta_v_ = viewport_v / image_height_;
 
 	// Find upper-left pixel location.
-	Vec3& viewport_upper_left = camera_center_ - viewport_u / 2 - viewport_v / 2 - Vec3(0.0f, 0.0f, focal_length);
+	Vec3& viewport_upper_left = camera_center_ - focal_length * camera_back_ - viewport_u / 2 - viewport_v / 2;
 	pixel_00_loc_ = viewport_upper_left + (pixel_delta_u_ + pixel_delta_v_) / 2.0f;
 }
 

@@ -12,17 +12,13 @@ int main()
 	// World.
 	HittableList world;
 
-	std::shared_ptr<Lambertian> material_ground{ std::make_shared<Lambertian>(Color{0.8f, 0.8f, 0.0f}) };
-	std::shared_ptr<Lambertian> material_center{ std::make_shared<Lambertian>(Color{0.7f, 0.3f, 0.3f}) };
-	std::shared_ptr<Lambertian> material_behind{ std::make_shared<Lambertian>(Color{0.3f, 0.4f, 0.8f}) };
-	std::shared_ptr<Metal> material_left{ std::make_shared<Metal>(Color{0.8f, 0.8f, 0.8f}, 0.3f) };
-	std::shared_ptr<Metal> material_right{ std::make_shared<Metal>(Color{0.8f, 0.6f, 0.2f}, 1.0f) };
+	std::shared_ptr<Lambertian> diff_blue{ std::make_shared<Lambertian>(Color{0.0f, 0.0f, 1.0f}) };
+	std::shared_ptr<Lambertian> diff_red{ std::make_shared<Lambertian>(Color{1.0f, 0.0f, 0.0f}) };
+	std::shared_ptr<Lambertian> diff_green{ std::make_shared<Lambertian>(Color{0.0f, 1.0f, 0.0f}) };
 
-	world.add(std::make_shared<Sphere>(Point3{  0.0f, -100.5f, -1.0f }, 100.0f, material_ground));
-	world.add(std::make_shared<Sphere>(Point3{  0.0f,    0.0f, -1.0f },   0.5f, material_center));
-	world.add(std::make_shared<Sphere>(Point3{  0.0f,    0.0f,  1.0f },   0.5f, material_behind));
-	world.add(std::make_shared<Sphere>(Point3{ -1.0f,    0.0f, -1.0f },   0.5f, material_left));
-	world.add(std::make_shared<Sphere>(Point3{  1.0f,    0.0f, -1.0f },   0.5f, material_right));
+	world.add(std::make_shared<Sphere>(Point3{  0.0f, -100.5f, -1.0f }, 100.0f, diff_green));
+	world.add(std::make_shared<Sphere>(Point3{ -0.5f, 0.0f, -1.0f }, 0.5f, diff_blue));
+	world.add(std::make_shared<Sphere>(Point3{  0.5f, 0.0f, -1.0f }, 0.5f, diff_red));
 	
 
 	// Camera.
@@ -32,6 +28,9 @@ int main()
 	camera.samples_per_pixel_ = 100;
 	camera.max_depth_ = 50;
 
+	camera.field_of_view_v_ = 90.0f;
+	camera.look_from_ = Point3{ 0.0f, 0.0f, 0.0f };
+	camera.look_at_ = Point3{ 0.0f, 0.0f, -1.0f };
 
 	// Render.
 	camera.render(world, IMAGE_FILEPATH_AND_NAME);
