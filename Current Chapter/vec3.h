@@ -171,6 +171,18 @@ inline Vec3 unit_vector(Vec3 v)
 	return v / v.length();
 }
 
+inline Vec3 random_in_unit_disk()
+{
+	while (true)
+	{
+		Vec3 p{ randomf(-1.0f, 1.0f), randomf(-1.0f, 1.0f), 0.0f };
+		if (p.length_squared() < 1.0f)
+		{
+			return p;
+		}
+	}
+}
+
 inline Vec3 random_in_unit_sphere()
 {
 	while (true)

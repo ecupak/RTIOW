@@ -79,12 +79,20 @@ void Camera::render(const Hittable& world, const char* image_output_filepath)
 
 Ray Camera::get_ray(int x, int y)
 {
-	// Create ray from camera to pixel center.
+	// Create ray from random spot on defocus disk to pixel center.
 	Point3 pixel_center{ pixel_00_loc_ + (x * pixel_delta_u_) + (y * pixel_delta_v_) };
 	Point3 pixel_sample{ pixel_center + pixel_sample_square() };
 	
-	Vec3 camera_to_pixel{ pixel_sample - camera_center_ };
-	return { camera_center_, camera_to_pixel };
+	Point3 ray_origin{ (defocus_angle_ <= 0.0f) ? camera_center_ : defocus_disk_sample() };
+	Vec3 ray_direction{ pixel_sample - ray_origin };
+	return { ray_origin, ray_direction };
+}
+
+
+Point3 Camera::defocus_disk_sample() const
+{
+	Point3 p{ random_in_unit_disk() };
+	return camera_center_ + (p[0] * defocus_disk_u_) + (p[1] * defocus_disk_v_);
 }
 
 
@@ -106,12 +114,11 @@ void Camera::initialize()
 
 	camera_center_ = look_from_;
 
-	// Viewport dimensions.
-	float focal_length{ (look_from_ - look_at_).length() };
+	// Viewport dimensions.	
 	float theta{ radians(field_of_view_v_) };
-	float h{ tan(theta / distance_to_plane_) };
-	float viewport_height{ 2.0f * h * focal_length };
-	float viewport_width{ viewport_height * (static_cast<float>(image_width_) / image_height_) };	
+	float h{ tan(theta / 2.0f) };
+	float viewport_height{ 2.0f * h * focus_distance_ };
+	float viewport_width{ viewport_height * (static_cast<float>(image_width_) / image_height_) };
 
 	// Camera vectors.
 	camera_back_ = unit_vector(look_from_ - look_at_);
@@ -127,8 +134,13 @@ void Camera::initialize()
 	pixel_delta_v_ = viewport_v / image_height_;
 
 	// Find upper-left pixel location.
-	Vec3& viewport_upper_left = camera_center_ - focal_length * camera_back_ - viewport_u / 2 - viewport_v / 2;
+	Vec3& viewport_upper_left = camera_center_ - focus_distance_ * camera_back_ - viewport_u / 2 - viewport_v / 2;
 	pixel_00_loc_ = viewport_upper_left + (pixel_delta_u_ + pixel_delta_v_) / 2.0f;
+
+	// Defocus disk.
+	float defocus_radius{ focus_distance_ * tan(radians(defocus_angle_ / 2.0f)) };
+	defocus_disk_u_ = camera_right_ * defocus_radius;
+	defocus_disk_v_ = camera_up_ * defocus_radius;
 }
 
 

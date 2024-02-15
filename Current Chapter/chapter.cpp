@@ -25,8 +25,8 @@ int main()
 	world.add(std::make_shared<Sphere>(Point3{  0.0f, -100.5f, -1.0f }, 100.0f, diff_green));
 	
 	world.add(std::make_shared<Sphere>(Point3{ -1.0f, 0.0f, -1.0f }, -0.4f, glass));
-	world.add(std::make_shared<Sphere>(Point3{  0.0f, 0.0f, -0.5f },  0.5f, diff_red));
-	world.add(std::make_shared<Sphere>(Point3{  1.0f, 0.0f, -1.5f },  0.5f, metal_gold));
+	world.add(std::make_shared<Sphere>(Point3{  0.0f, 0.0f, -1.0f },  0.5f, diff_red));
+	world.add(std::make_shared<Sphere>(Point3{  1.0f, 0.0f, -1.0f },  0.5f, metal_gold));
 	
 	
 
@@ -37,9 +37,13 @@ int main()
 	camera.samples_per_pixel_ = 100;
 	camera.max_depth_ = 50;
 
-	camera.field_of_view_v_ = 30.0f;
-	camera.look_from_ = Point3{ 3.0f, 2.0f, -1.0f };
-	camera.look_at_ = Point3{ -1.0f, 0.0f, -1.0f };
+	camera.field_of_view_v_ = 90.0f;
+	//camera.look_from_ = Point3{ -2.0f, 2.0f, 1.0f };
+	camera.look_from_ = Point3{ 0.0f, 0.0f, 0.0f };
+	camera.look_at_ = Point3{ 0.0f, 0.0f, -1.0f };
+
+	camera.defocus_angle_ = 0.0f;
+	camera.focus_distance_ = 3.4;
 
 	// Render.
 	camera.render(world, IMAGE_FILEPATH_AND_NAME);
