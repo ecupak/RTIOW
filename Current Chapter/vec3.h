@@ -202,7 +202,16 @@ inline Vec3 random_on_hemisphere(const Vec3& normal)
 	}
 }
 
-inline Vec3 reflect(const Vec3& v, const Vec3& n)
+inline Vec3 reflect(const Vec3& v, const Vec3& normal)
 {
-	return v - 2.0f * dot(v, n) * n;
+	return v - 2.0f * dot(v, normal) * normal;
+}
+
+inline Vec3 refract(const Vec3& ray_in, const Vec3& normal, float refraction_ratio)
+{
+	float cos_theta{ fmin(dot(-ray_in, normal), 1.0f) };
+	Vec3 ray_out_perp{ refraction_ratio * (ray_in + cos_theta * normal) };
+	Vec3 ray_out_parallel{ -sqrt(fabs(1.0f - ray_out_perp.length_squared())) * normal };
+
+	return ray_out_perp + ray_out_parallel;
 }
